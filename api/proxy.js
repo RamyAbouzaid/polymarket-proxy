@@ -1,4 +1,4 @@
-const SHARED_SECRET = "polyyard-proxy-secret-CHANGE_ME";
+const SHARED_SECRET = "wl5WJhCBavg9AaqXrwDWuWa93sB6vMdH";
 const TARGET = "https://clob.polymarket.com";
 
 export default async function handler(req, res) {
