@@ -1,6 +1,14 @@
 const SHARED_SECRET = "wl5WJhCBavg9AaqXrwDWuWa93sB6vMdH";
 const TARGET = "https://clob.polymarket.com";
 
+function readBody(req) {
+  return new Promise((resolve) => {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+  });
+}
+
 export default async function handler(req, res) {
   if (req.headers["x-proxy-secret"] !== SHARED_SECRET) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -16,10 +24,12 @@ export default async function handler(req, res) {
     }
   }
 
+  const body = req.method !== "GET" && req.method !== "HEAD" ? await readBody(req) : undefined;
+
   const response = await fetch(targetUrl, {
     method: req.method,
     headers: headers,
-    body: req.method !== "GET" && req.method !== "HEAD" ? req.body : undefined,
+    body: body && body.length > 0 ? body : undefined,
   });
 
   const data = await response.arrayBuffer();
